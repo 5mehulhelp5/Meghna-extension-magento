@@ -1,0 +1,17 @@
+<?php
+/** @var \Codilar\ProductDiscount\Block\Price $block */
+?>
+
+<div class="product-discount-price">
+    <span class="original-price">
+        <?= $block->getRegularPrice() ?>
+    </span>
+
+    <span class="discounted-price">
+        <?= $block->getFinalPrice() ?>
+    </span>
+
+    <span class="discount-badge">
+        <?= $block->escapeHtml($block->getDiscountPercent()) ?>% OFF
+    </span>
+</div>

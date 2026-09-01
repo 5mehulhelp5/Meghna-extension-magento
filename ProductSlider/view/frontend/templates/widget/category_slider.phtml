@@ -1,0 +1,87 @@
+<?php
+/** @var \Codilar\ProductSlider\Block\Widget\CategorySlider $block */
+$products = $block->getCategoryProducts();
+?>
+
+<?php if ($products && $products->getSize()): ?>
+    <div class="block widget block-products-list category-slider-block">
+        <?php if ($title = $block->getData('title')): ?>
+            <div class="block-title title">
+                <strong><?= $block->escapeHtml($title) ?></strong>
+            </div>
+        <?php endif; ?>
+
+        <div class="block-content content">
+            <div class="products-slider-container">
+                <ol class="product-items widget-product-grid" id="codilar-category-slider">
+                    <?php foreach ($products as $product): ?>
+                        <?php
+                        $productImage = $block->getImage($product, 'category_page_grid');
+                        $imageUrl = $productImage->getUrl();
+                        ?>
+                        <li class="product-item">
+                            <div class="product-item-info">
+                                <a href="<?= $block->escapeUrl($product->getProductUrl()) ?>" class="product-item-photo">
+                                    <span class="product-image-container" style="width: 240px;">
+                                        <span class="product-image-wrapper" style="padding-bottom: 125%;">
+                                            <img class="product-image-photo"
+                                                 src="<?= $block->escapeUrl($imageUrl) ?>"
+                                                 alt="<?= $block->escapeHtmlAttr($product->getName()) ?>" />
+                                        </span>
+                                    </span>
+                                </a>
+                                <div class="product-item-details">
+                                    <strong class="product-item-name">
+                                        <a title="<?= $block->escapeHtmlAttr($product->getName()) ?>"
+                                           href="<?= $block->escapeUrl($product->getProductUrl()) ?>"
+                                           class="product-item-link">
+                                            <?= $block->escapeHtml($product->getName()) ?>
+                                        </a>
+                                    </strong>
+                                </div>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        require(['jquery', 'slick'], function($){
+            $(document).ready(function(){
+                $('#codilar-category-slider').slick({
+                    dots: true,
+                    infinite: true,
+                    speed: 300,
+                    slidesToShow: 4,
+                    slidesToScroll: 1,
+                    autoplay: false,
+                    responsive: [
+                        {
+                            breakpoint: 1024,
+                            settings: {
+                                slidesToShow: 3,
+                                slidesToScroll: 1
+                            }
+                        },
+                        {
+                            breakpoint: 600,
+                            settings: {
+                                slidesToShow: 2,
+                                slidesToScroll: 1
+                            }
+                        },
+                        {
+                            breakpoint: 480,
+                            settings: {
+                                slidesToShow: 1,
+                                slidesToScroll: 1
+                            }
+                        }
+                    ]
+                });
+            });
+        });
+    </script>
+<?php endif; ?>

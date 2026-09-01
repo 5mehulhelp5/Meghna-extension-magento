@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+
+    <widget id="codilar_product_slider"
+            class="Codilar\ProductSlider\Block\Widget\CategorySlider">
+
+        <label>Codilar Same Category Products Slider</label>
+
+        <description>
+            Displays products from the current product's category in a slider.
+        </description>
+
+        <parameters>
+
+            <parameter name="title" xsi:type="text" visible="true" sort_order="10"><label>Slider Title</label></parameter>
+
+            <parameter name="product_count" xsi:type="text" visible="true" sort_order="20"><label>Products Count</label><value>10</value></parameter>
+
+            <parameter name="template" xsi:type="select" visible="true" sort_order="30">
+                <label>Template</label>
+
+                <options>
+                    <option name="category_slider"
+                            value="Codilar_ProductSlider::widget/category_slider.phtml">
+                        <label>Category Slider</label>
+                    </option>
+                </options>
+            </parameter>
+
+        </parameters>
+
+    </widget>
+
+</widgets>

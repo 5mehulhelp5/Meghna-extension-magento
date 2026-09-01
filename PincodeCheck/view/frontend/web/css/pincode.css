@@ -1,0 +1,38 @@
+/* app/code/Codilar/PincodeCheck/view/frontend/web/css/pincode.css */
+
+.pincode-checker-block {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.pincode-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.pincode-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.pincode-text-input {
+    padding: 6px;
+    width: 150px;
+}
+
+.pincode-result-container {
+    margin-top: 10px;
+}
+
+.pincode-success-msg {
+    color: green;
+    font-weight: bold;
+}
+
+.pincode-error-msg {
+    color: red;
+    font-weight: bold;
+}

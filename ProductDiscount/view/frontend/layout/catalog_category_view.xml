@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Codilar_ProductDiscount::css/product-discount.css"/>
+    </head>
+    <body>
+        <referenceContainer name="category.product.list.additional">
+            <block class="Codilar\ProductDiscount\Block\Price"
+                   name="codilar.product.discount"
+                   template="Codilar_ProductDiscount::product/price.phtml" />
+        </referenceContainer>
+    </body>
+</page>

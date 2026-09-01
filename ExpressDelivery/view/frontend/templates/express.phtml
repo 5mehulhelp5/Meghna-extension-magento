@@ -1,0 +1,25 @@
+<?php
+/** @var \Codilar\ExpressDelivery\Block\Express $block */
+$product = $block->getData('product');
+$deliveryLabel = $block->getDeliveryLabel($product);
+
+if (!$deliveryLabel) {
+    return;
+}
+
+// Define inline background and text colors based on the label
+if ($deliveryLabel === 'Express Delivery') {
+    $bgColor = '#e6f4ea';
+    $textColor = '#137333'; // Green
+} elseif ($deliveryLabel === 'Overnight Delivery') {
+    $bgColor = '#fef7e0';
+    $textColor = '#b06000'; // Yellow/Amber
+} else {
+    $bgColor = '#e8f0fe';
+    $textColor = '#1967d2'; // Blue (Standard Delivery)
+}
+?>
+
+<span class="delivery-badge" style="font-size: 10px; font-weight: 600; margin-left: 8px; padding: 2px 6px; border-radius: 4px; display: inline-block; vertical-align: middle; background: <?= /* @noEscape */ $bgColor ?>; color: <?= /* @noEscape */ $textColor ?>;">
+    <?= $block->escapeHtml($deliveryLabel) ?>
+</span>
