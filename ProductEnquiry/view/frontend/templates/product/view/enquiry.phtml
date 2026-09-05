@@ -1,0 +1,58 @@
+<?php
+/** @var $block \Magento\Catalog\Block\Product\View */
+$product = $block->getProduct();
+if ($product->getTypeId() !== 'configurable'):
+    ?>
+    <div class="product-enquiry-block">
+        <button type="button" id="open-enquiry-modal" class="product-enquiry-btn">
+            <span><?= $block->escapeHtml(__('Product Enquiry')) ?></span>
+        </button>
+    </div>
+
+    <div id="product-enquiry-modal-content" style="display: none;">
+        <form id="product-enquiry-form" method="POST">
+            <fieldset class="fieldset">
+                <div class="field name required">
+                    <label class="label" for="enquiry-name"><span><?= $block->escapeHtml(__('Name')) ?></span></label>
+                    <div class="control">
+                        <input type="text" id="enquiry-name" name="name" data-validate="{required:true}" class="input-text"/>
+                    </div>
+                </div>
+                <div class="field address required">
+                    <label class="label" for="enquiry-address"><span><?= $block->escapeHtml(__('Address')) ?></span></label>
+                    <div class="control">
+                        <textarea id="enquiry-address" name="address" data-validate="{required:true}" class="input-text"></textarea>
+                    </div>
+                </div>
+                <div class="field email required">
+                    <label class="label" for="enquiry-email"><span><?= $block->escapeHtml(__('Email')) ?></span></label>
+                    <div class="control">
+                        <input type="email" id="enquiry-email" name="email" data-validate="{required:true, 'validate-email':true}" class="input-text"/>
+                    </div>
+                </div>
+                <div class="field sku required">
+                    <label class="label" for="enquiry-product-sku"><span><?= $block->escapeHtml(__('SKU')) ?></span></label>
+                    <div class="control">
+                        <input type="text" id="enquiry-product-sku" name="sku" readonly data-validate="{required:true}" class="input-text"/>
+                    </div>
+                </div>
+                <div class="field qty required">
+                    <label class="label" for="enquiry-qty"><span><?= $block->escapeHtml(__('Quantity')) ?></span></label>
+                    <div class="control">
+                        <input type="number" id="enquiry-qty" name="qty" value="1" min="1" data-validate="{required:true, 'validate-digits':true, 'min':1}" class="input-text"/>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <script type="text/x-magento-init">
+        {
+            "#open-enquiry-modal": {
+                "Codilar_ProductEnquiry/js/enquiry-modal": {
+                    "submitUrl": "<?= $block->getUrl('codilar_productenquiry/index/submit') ?>"
+                }
+            }
+        }
+    </script>
+<?php endif; ?>

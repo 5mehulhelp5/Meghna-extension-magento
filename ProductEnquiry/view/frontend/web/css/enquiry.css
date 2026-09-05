@@ -1,0 +1,25 @@
+.product-enquiry-btn {
+    background-color: #ff5722;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+.product-enquiry-btn:hover {
+    background-color: #e64a19;
+}
+.enquiry-modal-form .field {
+    margin-bottom: 15px;
+}
+.enquiry-modal-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+input[readonly]#enquiry-product-sku {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}

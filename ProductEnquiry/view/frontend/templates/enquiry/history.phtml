@@ -1,0 +1,38 @@
+<?php
+/** @var \Codilar\ProductEnquiry\Block\Enquiry\History $block */
+$enquiries = $block->getEnquiriesCollection();
+?>
+<div class="table-wrapper codilar-enquiry-history" style="margin-top: 20px;">
+    <?php if ($enquiries->count()): ?>
+        <table class="data table table-codilar-enquiries" id="enquiry-history-table">
+            <thead>
+            <tr>
+                <th scope="col" class="col id"><?= $block->escapeHtml(__('ID')) ?></th>
+                <th scope="col" class="col name"><?= $block->escapeHtml(__('Name')) ?></th>
+                <th scope="col" class="col email"><?= $block->escapeHtml(__('Email')) ?></th>
+                <th scope="col" class="col address"><?= $block->escapeHtml(__('Address')) ?></th>
+                <th scope="col" class="col sku"><?= $block->escapeHtml(__('SKU')) ?></th>
+                <th scope="col" class="col qty"><?= $block->escapeHtml(__('Quantity')) ?></th>
+                <th scope="col" class="col date"><?= $block->escapeHtml(__('Date')) ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($enquiries as $enquiry): ?>
+                <tr>
+                    <td data-th="<?= $block->escapeHtml(__('ID')) ?>" class="col id"><?= $block->escapeHtml((string)$enquiry->getId()) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Name')) ?>" class="col name"><?= $block->escapeHtml((string)$enquiry->getName()) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Email')) ?>" class="col email"><?= $block->escapeHtml((string)$enquiry->getEmail()) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Address')) ?>" class="col address"><?= $block->escapeHtml((string)$enquiry->getAddress()) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('SKU')) ?>" class="col sku"><?= $block->escapeHtml((string)$enquiry->getSku()) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Quantity')) ?>" class="col qty"><?= $block->escapeHtml((string)($enquiry->getData('quantity') ?? $enquiry->getData('qty'))) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Date')) ?>" class="col date"><?= $block->escapeHtml((string)$enquiry->getCreatedAt()) ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <div class="message info empty">
+            <span><?= $block->escapeHtml(__('No product enquiries found.')) ?></span>
+        </div>
+    <?php endif; ?>
+</div>
