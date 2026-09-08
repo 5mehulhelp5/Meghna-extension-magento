@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Codilar\StoreLocation\Api\Data\StoreInterface" type="Codilar\StoreLocation\Model\Store"/>
+    <preference for="Codilar\StoreLocation\Api\StoreRepositoryInterface" type="Codilar\StoreLocation\Model\StoreRepository"/>
+</config>

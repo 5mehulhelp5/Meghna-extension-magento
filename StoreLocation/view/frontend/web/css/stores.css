@@ -1,0 +1,46 @@
+.store-locator-container {
+    margin: 20px 0;
+}
+
+.store-locator-container h2 {
+    margin-bottom: 5px;
+}
+
+.store-action-wrapper {
+    margin: 15px 0;
+}
+
+.store-action-btn {
+    background: #007bdb;
+    color: #fff;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 4px;
+}
+
+.store-list {
+    margin-top: 20px;
+}
+
+.store-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.store-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.store-image img {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}

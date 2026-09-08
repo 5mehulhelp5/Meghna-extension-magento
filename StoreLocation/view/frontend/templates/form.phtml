@@ -1,0 +1,37 @@
+<?php /** @var \Magento\Framework\View\Element\Template $block */ ?>
+<div class="store-form-container" style="max-width: 600px; margin: 20px auto;">
+    <h2>Add Store Location</h2>
+    <form action="<?= $block->getUrl('stores/index/save') ?>" method="POST" enctype="multipart/form-data">
+        <?= $block->getBlockHtml('formkey') ?>
+
+        <div style="margin-bottom: 15px;">
+            <label>Store Name:</label><br>
+            <input type="text" name="name" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>Address:</label><br>
+            <textarea name="address" required style="width: 100%; padding: 8px;"></textarea>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>City:</label><br>
+            <input type="text" name="city" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>Pincode:</label><br>
+            <input type="text" name="pincode" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>Phone:</label><br>
+            <input type="text" name="phone" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>Opening Hours:</label><br>
+            <input type="text" name="opening_hours" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>Store Image:</label><br>
+            <input type="file" name="image" accept="image/*">
+        </div>
+        <button type="submit" style="padding: 10px 20px; background: #007bdb; color: #fff; border: none;">Save Store</button>
+    </form>
+</div>

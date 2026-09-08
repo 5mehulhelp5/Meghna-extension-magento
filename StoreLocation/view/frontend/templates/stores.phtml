@@ -1,0 +1,40 @@
+<?php /** @var \Codilar\StoreLocation\Block\StoreList $block */ ?>
+<?php $mediaUrl = $block->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA); ?>
+
+<div class="store-locator-container">
+    <h2>Store Locator Across India</h2>
+    <p>Check out all our physical branches nationwide.</p>
+
+    <div class="store-action-wrapper">
+        <a href="<?= $block->getUrl('stores/index/form') ?>" class="action primary store-action-btn">Add New Store Location</a>
+    </div>
+
+    <div class="store-list">
+        <?php $stores = $block->getStores(); ?>
+        <?php if ($stores && count($stores)): ?>
+            <ul>
+                <?php foreach ($stores as $store): ?>
+                    <li class="store-card">
+
+                        <!-- Store Image -->
+                        <?php if ($store->getImage()): ?>
+                            <div class="store-image">
+                                <img src="<?= $block->getBaseUrl() . 'media/' . $store->getImage() ?>" alt="<?= $block->escapeHtml($store->getName()) ?>">
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Store Details -->
+                        <div class="store-details">
+                            <h3><?= $block->escapeHtml($store->getName()) ?></h3>
+                            <p><strong>Address:</strong> <?= $block->escapeHtml($store->getAddress()) ?>, <?= $block->escapeHtml($store->getCity()) ?> - <?= $block->escapeHtml($store->getPincode()) ?></p>
+                            <p><strong>Phone:</strong> <?= $block->escapeHtml($store->getPhone()) ?></p>
+                            <p><strong>Opening Hours:</strong> <?= $block->escapeHtml($store->getOpeningHours()) ?></p>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>No stores found.</p>
+        <?php endif; ?>
+    </div>
+</div>
