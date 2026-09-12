@@ -29,6 +29,9 @@
                             <p><strong>Address:</strong> <?= $block->escapeHtml($store->getAddress()) ?>, <?= $block->escapeHtml($store->getCity()) ?> - <?= $block->escapeHtml($store->getPincode()) ?></p>
                             <p><strong>Phone:</strong> <?= $block->escapeHtml($store->getPhone()) ?></p>
                             <p><strong>Opening Hours:</strong> <?= $block->escapeHtml($store->getOpeningHours()) ?></p>
+                            <a href="<?= $block->getUrl('stores/index/delete', ['id' => $store->getId()]) ?>" onclick="return confirm('Are you sure you want to delete this store?');">
+                                Delete
+                            </a>
                         </div>
                     </li>
                 <?php endforeach; ?>

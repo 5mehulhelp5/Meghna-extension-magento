@@ -1,0 +1,17 @@
+{
+    "store_location": {
+        "column": {
+            "store_id": true,
+            "name": true,
+            "address": true,
+            "city": true,
+            "pincode": true,
+            "phone": true,
+            "opening_hours": true,
+            "image": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

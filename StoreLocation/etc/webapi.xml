@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <!-- POST Route for Save / Update -->
+    <route url="/V1/stores-location" method="POST">
+        <service class="Codilar\StoreLocation\Api\StoreRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="Codilar_StoreLocation::save"/>
+        </resources>
+    </route>
+
+    <!-- GET Route for List -->
+    <route url="/V1/stores-location" method="GET">
+        <service class="Codilar\StoreLocation\Api\StoreRepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="Codilar_StoreLocation::store_location"/>
+        </resources>
+    </route>
+    <route url="/V1/stores-location/:storeId" method="GET">
+        <service class="Codilar\StoreLocation\Api\StoreRepositoryInterface" method="getById"/>
+        <resources>
+            <resource ref="Codilar_StoreLocation::store_location"/>
+        </resources>
+    </route>
+    <!-- DELETE Route by ID -->
+    <route url="/V1/stores-location/:storeId" method="DELETE">
+        <service class="Codilar\StoreLocation\Api\StoreRepositoryInterface" method="deleteById"/>
+        <resources>
+            <resource ref="Codilar_StoreLocation::delete"/>
+        </resources>
+    </route>
+</routes>

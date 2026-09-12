@@ -7,25 +7,19 @@ use Codilar\StoreLocation\Model\ResourceModel\Store\CollectionFactory;
 
 class StoreList extends Template
 {
-    /**
-     * @param Context $context
-     * @param CollectionFactory $collectionFactory
-     * @param array $data
-     */
+    protected $collectionFactory;
+
     public function __construct(
         Context $context,
-        private readonly CollectionFactory $collectionFactory,
+        CollectionFactory $collectionFactory,
         array $data = []
     ) {
+        $this->collectionFactory = $collectionFactory;
         parent::__construct($context, $data);
     }
 
-    /**
-     * @return \Codilar\StoreLocation\Model\ResourceModel\Store\Collection
-     */
     public function getStores()
     {
         return $this->collectionFactory->create();
     }
-
 }

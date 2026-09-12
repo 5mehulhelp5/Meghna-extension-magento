@@ -1,0 +1,16 @@
+{
+    "product_enquiry": {
+        "column": {
+            "entity_id": true,
+            "name": true,
+            "address": true,
+            "email": true,
+            "sku": true,
+            "qty": true,
+            "created_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}
