@@ -1,0 +1,15 @@
+<?php
+/** @var \Codilar\LoyaltyWallet\Block\Checkout\SuccessPoints $block */
+$pointsEarned = $block->getPointsEarned();
+?>
+
+<?php if ($pointsEarned > 0): ?>
+    <div class="block block-Codilar-rewards" style="margin: 20px 0; padding: 15px 20px; background-color: #e8f4fd; border-left: 4px solid #006bb4; border-radius: 4px;">
+        <strong style="font-size: 16px; color: #333; display: block; margin-bottom: 5px;">
+            Codilar Rewards Earned!
+        </strong>
+        <p style="margin: 0; font-size: 14px; color: #444;">
+            You have successfully earned <strong><?= (int)$pointsEarned ?> Loyalty Points</strong> from this purchase!
+        </p>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:config:etc/config.xsd">
+    <default>
+        <magecafe_loyalty>
+            <general>
+                <points_per_currency>1</points_per_currency>
+                <enabled>1</enabled>
+            </general>
+        </magecafe_loyalty>
+    </default>
+</config>

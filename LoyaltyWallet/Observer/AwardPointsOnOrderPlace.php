@@ -1,0 +1,111 @@
+<?php
+declare(strict_types=1);
+
+namespace Codilar\LoyaltyWallet\Observer;
+
+use Codilar\LoyaltyWallet\Api\Data\LoyaltyLedgerInterfaceFactory;
+use Codilar\LoyaltyWallet\Api\LoyaltyLedgerRepositoryInterface;
+use Magento\Framework\Api\SearchCriteriaBuilderFactory;
+use Magento\Framework\Api\SortOrderBuilder;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
+use Magento\Store\Model\ScopeInterface;
+use Psr\Log\LoggerInterface;
+
+class AwardPointsOnOrderPlace implements ObserverInterface
+{
+    protected ScopeConfigInterface $scopeConfig;
+    protected LoyaltyLedgerRepositoryInterface $ledgerRepository;
+    protected LoyaltyLedgerInterfaceFactory $ledgerFactory;
+    protected SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory;
+    protected SortOrderBuilder $sortOrderBuilder;
+    protected LoggerInterface $logger;
+
+    public function __construct(
+        ScopeConfigInterface $scopeConfig,
+        LoyaltyLedgerRepositoryInterface $ledgerRepository,
+        LoyaltyLedgerInterfaceFactory $ledgerFactory,
+        SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
+        SortOrderBuilder $sortOrderBuilder,
+        LoggerInterface $logger
+    ) {
+        $this->scopeConfig = $scopeConfig;
+        $this->ledgerRepository = $ledgerRepository;
+        $this->ledgerFactory = $ledgerFactory;
+        $this->searchCriteriaBuilderFactory = $searchCriteriaBuilderFactory;
+        $this->sortOrderBuilder = $sortOrderBuilder;
+        $this->logger = $logger;
+    }
+
+    public function execute(Observer $observer): void
+    {
+        try {
+            $order = $observer->getEvent()->getOrder();
+            if (!$order || !$order->getCustomerId()) {
+                $this->logger->info('Loyalty: Skipped (Guest order or missing order object).');
+                return;
+            }
+
+            $storeId = (int)$order->getStoreId();
+            $subtotal = (float)$order->getSubtotal();
+
+            if ($subtotal <= 0) {
+                $this->logger->info('Loyalty: Skipped (Subtotal is zero or negative).');
+                return;
+            }
+
+            // Fetch configurable rate (ensuring lowercase path matching config.xml)
+            $rate = (float)$this->scopeConfig->getValue(
+                'codilar_loyalty/general/points_per_currency',
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
+
+            $pointsEarned = (int)floor($subtotal * $rate);
+
+            if ($pointsEarned <= 0) {
+                $this->logger->info("Loyalty: Skipped. Calculated points <= 0 (Subtotal: {$subtotal}, Rate: {$rate}). Check if configuration is set.");
+                return;
+            }
+
+            $customerId = (int)$order->getCustomerId();
+
+            // 1. Get the latest transaction entry for this customer using sort order
+            $sortOrder = $this->sortOrderBuilder
+                ->setField('entity_id')
+                ->setDescendingDirection()
+                ->create();
+
+            $searchCriteria = $this->searchCriteriaBuilderFactory->create()
+                ->addFilter('customer_id', $customerId)
+                ->addSortOrder($sortOrder)
+                ->setPageSize(1)
+                ->create();
+
+            $collection = $this->ledgerRepository->getList($searchCriteria)->getItems();
+            $latestRecord = reset($collection);
+
+            // 2. Take the previous balance_after, or 0 if this is their first order
+            $currentBalance = $latestRecord ? (int)$latestRecord->getBalanceAfter() : 0;
+
+            // 3. Add the newly earned points
+            $newBalanceAfter = $currentBalance + $pointsEarned;
+
+            // Save ledger transaction record
+            $ledger = $this->ledgerFactory->create();
+            $ledger->setCustomerId($customerId);
+            $ledger->setOrderIncrementId($order->getIncrementId());
+            $ledger->setQuantity($pointsEarned);
+            $ledger->setBalanceAfter($newBalanceAfter); // This will now correctly save the cumulative sum!
+
+            $this->ledgerRepository->save($ledger);
+
+            $this->logger->info('Loyalty: Successfully awarded ' . $pointsEarned . ' points for order ' . $order->getIncrementId() . '. New balance: ' . $newBalanceAfter);
+
+        } catch (\Exception $e) {
+            // Catches any exception so the checkout process never breaks or rolls back
+            $this->logger->error('Loyalty Accrual Exception: ' . $e->getMessage());
+        }
+    }
+}

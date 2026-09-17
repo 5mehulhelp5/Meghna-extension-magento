@@ -1,0 +1,104 @@
+<?php
+/** @var \Codilar\LoyaltyWallet\Block\Checkout\WalletApply $block */
+?>
+
+<div
+    id="loyalty-wallet-checkout-section"
+    class="payment-option opc-payment-additional"
+    style="
+        margin: 15px 0;
+        border: 1px solid #c2c2c2;
+        padding: 15px;
+        background: #fff;
+        border-radius: 4px;
+    "
+    data-mage-init='{"codilarWallet": {}}'
+>
+
+    <div
+        class="payment-option-title"
+        style="
+            font-weight: 600;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        "
+    >
+        <span>
+            <?= $block->escapeHtml(__('Use Loyalty Wallet Balance')) ?>
+        </span>
+    </div>
+
+    <div class="payment-option-content">
+
+        <div class="payment-option-inner">
+
+            <div class="field">
+
+                <label
+                    class="label"
+                    for="wallet-amount-input"
+                >
+                    <span>
+                        <?= $block->escapeHtml(__('Available Balance: ₹')) ?>
+
+                        <strong style="color: #006bb4;">
+                            <?= number_format(
+                                $block->getCustomerBalance(),
+                                2
+                            ) ?>
+                        </strong>
+                    </span>
+                </label>
+
+                <div
+                    class="control"
+                    style="
+                        display: flex;
+                        gap: 10px;
+                        margin-top: 8px;
+                    "
+                >
+
+                    <input
+                        type="number"
+                        id="wallet-amount-input"
+                        name="wallet_amount"
+                        placeholder="<?= $block->escapeHtmlAttr(
+                            __('Enter amount to use')
+                        ) ?>"
+                        class="input-text"
+                        min="0"
+                        step="0.01"
+                        style="max-width: 250px;"
+                    />
+
+                    <button
+                        type="button"
+                        id="apply-wallet-btn"
+                        class="action action-apply primary"
+                        style="padding: 7px 15px;"
+                    >
+                        <span>
+                            <?= $block->escapeHtml(
+                                __('Apply Wallet')
+                            ) ?>
+                        </span>
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                id="wallet-message"
+                style="
+                    margin-top: 8px;
+                    font-size: 1.3rem;
+                "
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>

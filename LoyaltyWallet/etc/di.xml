@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Codilar\LoyaltyWallet\Api\Data\LoyaltyLedgerInterface" type="Codilar\LoyaltyWallet\Model\LoyaltyLedger" />
+    <preference for="Codilar\LoyaltyWallet\Api\LoyaltyLedgerRepositoryInterface" type="Codilar\LoyaltyWallet\Model\LoyaltyLedgerRepository" />
+    <!-- Store Wallet Preferences -->
+    <preference for="Codilar\LoyaltyWallet\Api\Data\StoreWalletInterface" type="Codilar\LoyaltyWallet\Model\StoreWallet" />
+    <preference for="Codilar\LoyaltyWallet\Api\StoreWalletRepositoryInterface" type="Codilar\LoyaltyWallet\Model\StoreWalletRepository" />
+</config>

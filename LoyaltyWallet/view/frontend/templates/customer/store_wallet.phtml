@@ -1,0 +1,43 @@
+<?php
+/** @var \Codilar\LoyaltyWallet\Block\Customer\StoreWallet $block */
+$storeBalance = $block->getStoreWalletBalance();
+$transactions = $block->getStoreWalletTransactions();
+?>
+<div class="store-wallet-wrapper">
+    <h2><?= __('My Store Wallet') ?></h2>
+
+    <div class="wallet-card" style="background: #f8f9fa; padding: 20px; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 25px;">
+        <h3><?= __('Current Wallet Cash Balance') ?></h3>
+        <p style="font-size: 26px; font-weight: bold; color: #007bff;">$<?= number_format($storeBalance, 2) ?></p>
+    </div>
+
+    <h3><?= __('Wallet Cash History') ?></h3>
+    <?php if (!empty($transactions)): ?>
+        <table class="data table table-order-items" style="width:100%; margin-top:10px;">
+            <thead>
+            <tr>
+                <th><?= __('Date') ?></th>
+                <th><?= __('Order #') ?></th>
+                <th><?= __('Amount Change') ?></th>
+                <th><?= __('Balance After') ?></th>
+                <th><?= __('Comment') ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($transactions as $stx): ?>
+                <tr>
+                    <td><?= $block->escapeHtml($stx->getCreatedAt()) ?></td>
+                    <td><?= $block->escapeHtml($stx->getOrderIncrementId() ?? 'N/A') ?></td>
+                    <td style="color: <?= (float)$stx->getAmount() >= 0 ? 'green' : 'red' ?>;">
+                        <?= ((float)$stx->getAmount() > 0 ? '+' : '') . number_format((float)$stx->getAmount(), 2) ?>
+                    </td>
+                    <td><strong>$<?= number_format((float)$stx->getBalanceAfter(), 2) ?></strong></td>
+                    <td><?= $block->escapeHtml($stx->getComment()) ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p><?= __('You have no store wallet transactions yet.') ?></p>
+    <?php endif; ?>
+</div>

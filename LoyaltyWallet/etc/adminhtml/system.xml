@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="codilar" translate="label" sortOrder="100">
+            <label>Codilar Modules</label>
+        </tab>
+        <section id="codilar_loyalty" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Loyalty Wallet</label>
+            <tab>codilar</tab>
+            <resource>Codilar_LoyaltyWallet::config</resource>
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Settings</label>
+                <field id="points_per_currency" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Points Per Currency Unit</label>
+                    <comment>E.g. Enter 1 to earn 1 point per currency spent.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
