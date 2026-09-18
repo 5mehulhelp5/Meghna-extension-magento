@@ -35,7 +35,7 @@ class ExpirePoints
             }
 
             // Define the 12-month expiry threshold limit date
-            $expiryLimit = (new \DateTime())->modify('-12 months');
+            $expiryLimit = (new \DateTime())->modify('-1');
 
             foreach ($customerEntries as $customerId => $records) {
                 // Simulate FIFO pool consumption for this customer

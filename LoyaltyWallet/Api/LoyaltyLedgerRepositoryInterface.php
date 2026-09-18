@@ -10,5 +10,10 @@ interface LoyaltyLedgerRepositoryInterface
      * @return LoyaltyLedgerInterface
      */
     public function save(\Codilar\LoyaltyWallet\Api\Data\LoyaltyLedgerInterface $ledger): \Codilar\LoyaltyWallet\Api\Data\LoyaltyLedgerInterface;
+
+    /**
+     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     * @return \Magento\Framework\Api\SearchResultsInterface
+     */
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria): \Magento\Framework\Api\SearchResultsInterface;
 }

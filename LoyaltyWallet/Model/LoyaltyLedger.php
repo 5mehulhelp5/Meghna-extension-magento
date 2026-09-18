@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Codilar\LoyaltyWallet\Model;
 
-use Magento\Framework\Model\AbstractModel;
 use Codilar\LoyaltyWallet\Api\Data\LoyaltyLedgerInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Model\AbstractModel;
 
 class LoyaltyLedger extends AbstractModel implements LoyaltyLedgerInterface
 {
@@ -62,6 +63,38 @@ class LoyaltyLedger extends AbstractModel implements LoyaltyLedgerInterface
     {
         return $this->setData('balance_after', $balance);
     }
+    public function getComment(): ?string
+    {
+        return $this->getData('comment');
+    }
 
+    public function setComment(?string $comment): LoyaltyLedgerInterface
+    {
+        return $this->setData('comment', $comment);
+    }
+    /**
+     * Enforce immutability: Block updates on existing ledger records.
+     */
+    public function beforeSave()
+    {
+        parent::beforeSave();
+
+        // If the record already exists in the database ($this->getId()), block the update!
+        if ($this->getId() && !$this->isObjectNew()) {
+            throw new LocalizedException(
+                __('Ledger entries are strictly immutable. You cannot modify past transactions.')
+            );
+        }
+    }
+
+    /**
+     * Enforce immutability: Block deletions of ledger records.
+     */
+    public function beforeDelete()
+    {
+        throw new LocalizedException(
+            __('Ledger entries cannot be deleted. Use compensating entries for corrections.')
+        );
+    }
 
 }

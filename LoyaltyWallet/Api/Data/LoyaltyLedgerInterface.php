@@ -59,4 +59,19 @@ interface LoyaltyLedgerInterface
      * @return LoyaltyLedgerInterface
      */
     public function setBalanceAfter(int $balance): LoyaltyLedgerInterface;
+
+    /**
+     * Get comment
+     *
+     * @return string|null
+     */
+    public function getComment(): ?string;
+
+    /**
+     * Set comment
+     *
+     * @param string|null $comment
+     * @return $this
+     */
+    public function setComment(?string $comment);
 }

@@ -16,7 +16,6 @@ $transactions = $block->getCustomerTransactions();
 
         <!-- Conversion Form Box -->
         <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2);">
-            <!-- NOTE: Using standard form safely outside parent nesting or handled via direct query parameters if needed -->
             <form action="<?= $block->getUrl('loyalty/wallet/convert') ?>" method="POST" id="coin-conversion-form" style="display: flex; gap: 10px; align-items: center; margin: 0;">
                 <?= $block->getBlockHtml('formkey') ?>
                 <div>
@@ -41,6 +40,7 @@ $transactions = $block->getCustomerTransactions();
                     <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
                         <th style="padding: 12px; border: 1px solid #dee2e6;"><?= __('Order ID') ?></th>
                         <th style="padding: 12px; border: 1px solid #dee2e6;"><?= __('Coins Movement') ?></th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;"><?= __('Expires On') ?></th>
                         <th style="padding: 12px; border: 1px solid #dee2e6;"><?= __('Balance After') ?></th>
                         <th style="padding: 12px; border: 1px solid #dee2e6;"><?= __('Date') ?></th>
                     </tr>
@@ -50,6 +50,15 @@ $transactions = $block->getCustomerTransactions();
                         $qty = (int)$txn->getQuantity();
                         $isPositive = $qty > 0;
                         $comment = $txn->getComment();
+                        $createdAt = $txn->getCreatedAt();
+
+                        // Calculate Expiry Date (12 months from creation for positive earnings)
+                        $expiresOnFormatted = '-';
+                        if ($isPositive && $createdAt) {
+                            $expiryDate = new \DateTime($createdAt);
+                            $expiryDate->modify('+12 months');
+                            $expiresOnFormatted = $expiryDate->format('M d, Y H:i');
+                        }
                         ?>
                         <tr>
                             <td style="padding: 12px; border: 1px solid #dee2e6;"><strong>#<?= $block->escapeHtml($txn->getOrderIncrementId() ?? 'N/A') ?></strong></td>
@@ -67,8 +76,15 @@ $transactions = $block->getCustomerTransactions();
                                     <?php endif; ?>
                                 </span>
                             </td>
+                            <td style="padding: 12px; border: 1px solid #dee2e6; color: #555; font-size: 13px;">
+                                <?php if ($isPositive): ?>
+                                    <span style="color: #d9534f; font-weight: 500;"><?= $block->escapeHtml($expiresOnFormatted) ?></span>
+                                <?php else: ?>
+                                    -
+                                <?php endif; ?>
+                            </td>
                             <td style="padding: 12px; border: 1px solid #dee2e6;"><?= (int)$txn->getBalanceAfter() ?></td>
-                            <td style="padding: 12px; border: 1px solid #dee2e6; color: #666;"><?= $block->escapeHtml($txn->getCreatedAt()) ?></td>
+                            <td style="padding: 12px; border: 1px solid #dee2e6; color: #666;"><?= $block->escapeHtml($createdAt) ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

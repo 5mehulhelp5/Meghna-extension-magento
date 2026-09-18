@@ -101,8 +101,8 @@ class ReverseLoyaltyPointsOnCancel implements ObserverInterface
                     $currentBalance += (int)$item->getQuantity();
                 }
                 $newBalanceAfter = $currentBalance + $reversalQuantity;
+                $ledger->setBalanceAfter(max(0, $newBalanceAfter));
 
-                $ledger->setBalanceAfter($newBalanceAfter);
                 $ledger->setCreatedAt(date('Y-m-d H:i:s'));
 
                 $this->ledgerRepository->save($ledger);
@@ -139,7 +139,7 @@ class ReverseLoyaltyPointsOnCancel implements ObserverInterface
                 }
                 $newCashBalanceAfter = $currentCashBalance + $grandTotal;
 
-                $storeWallet->setBalanceAfter($newCashBalanceAfter);
+                $storeWallet->setBalanceAfter(max(0, $newCashBalanceAfter));
 
                 $this->storeWalletRepository->save($storeWallet);
                 $this->logger->info("Store Wallet: Credited {$grandTotal} for canceled order #{$incrementId}.");

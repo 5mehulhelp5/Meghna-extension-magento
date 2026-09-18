@@ -6,20 +6,23 @@ namespace Codilar\OrderCancellation\Controller\Order;
 
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Message\ManagerInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Throwable;
 
-class Cancel extends Action implements HttpPostActionInterface
+class Cancel implements HttpPostActionInterface
 {
     public function __construct(
-        Context $context,
+        private readonly RequestInterface $request,
+        private readonly RedirectFactory $resultRedirectFactory,
+        private readonly ManagerInterface $messageManager,
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly Session $customerSession
     ) {
-        parent::__construct($context);
     }
 
     public function execute(): Redirect
@@ -28,7 +31,7 @@ class Cancel extends Action implements HttpPostActionInterface
         $resultRedirect->setPath('sales/order/history');
 
         try {
-            $orderId = (int) $this->getRequest()->getParam('order_id');
+            $orderId = (int) $this->request->getParam('order_id');
 
             if (!$orderId) {
                 throw new LocalizedException(
@@ -44,30 +47,32 @@ class Cancel extends Action implements HttpPostActionInterface
 
             $order = $this->orderRepository->get($orderId);
 
+            // Check that this order belongs to the logged-in customer
             if (
-                (int) $order->getCustomerId()
+                (int) $order->getCustomerId() !==
+                (int) $this->customerSession->getCustomerId()
             ) {
                 throw new LocalizedException(
                     __('You are not allowed to cancel this order.')
                 );
             }
 
-
-
-
+            // Check whether Magento allows cancellation
             if (!$order->canCancel()) {
                 throw new LocalizedException(
                     __('This order cannot be cancelled.')
                 );
             }
 
+            // Cancel order
             $order->cancel();
 
+            // Save cancelled order
             $this->orderRepository->save($order);
 
             $this->messageManager->addSuccessMessage(
                 __(
-                    'Order #%1 has been cancelled successfully.',
+                    'Order has been cancelled successfully.',
                     $order->getRealOrderId()
                 )
             );
@@ -75,7 +80,7 @@ class Cancel extends Action implements HttpPostActionInterface
             $this->messageManager->addErrorMessage(
                 $e->getMessage()
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->messageManager->addErrorMessage(
                 __('Unable to cancel the order. Please try again.')
             );

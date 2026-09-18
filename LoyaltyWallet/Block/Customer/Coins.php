@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Codilar\LoyaltyWallet\Block\Customer;
 
-use Magento\Framework\View\Element\Template;
-use Magento\Customer\Model\Session as CustomerSession;
 use Codilar\LoyaltyWallet\Api\LoyaltyLedgerRepositoryInterface;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrderBuilder;
+use Magento\Framework\View\Element\Template;
 use Psr\Log\LoggerInterface;
 
 class Coins extends Template
@@ -84,7 +84,7 @@ class Coins extends Template
         });
 
         // Log sorted entity IDs to verify order
-        $sortedIds = array_map(function($txn) {
+        $sortedIds = array_map(function ($txn) {
             return $txn->getEntityId();
         }, $transactions);
 
