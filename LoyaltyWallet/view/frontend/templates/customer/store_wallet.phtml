@@ -8,7 +8,7 @@ $transactions = $block->getStoreWalletTransactions();
 
     <div class="wallet-card" style="background: #f8f9fa; padding: 20px; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 25px;">
         <h3><?= __('Current Wallet Cash Balance') ?></h3>
-        <p style="font-size: 26px; font-weight: bold; color: #007bff;"><?= number_format($storeBalance, 2) ?></p>
+        <p style="font-size: 26px; font-weight: bold; color: #007bff;">₹<?= number_format($storeBalance, 2) ?></p>
     </div>
 
     <h3><?= __('Wallet Cash History') ?></h3>
