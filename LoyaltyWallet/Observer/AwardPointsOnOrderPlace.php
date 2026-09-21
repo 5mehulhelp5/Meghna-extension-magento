@@ -5,37 +5,23 @@ namespace Codilar\LoyaltyWallet\Observer;
 
 use Codilar\LoyaltyWallet\Api\Data\LoyaltyLedgerInterfaceFactory;
 use Codilar\LoyaltyWallet\Api\LoyaltyLedgerRepositoryInterface;
+use Codilar\LoyaltyWallet\Logger\Logger as WalletLogger;
 use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Store\Model\ScopeInterface;
-use Psr\Log\LoggerInterface;
 
 class AwardPointsOnOrderPlace implements ObserverInterface
 {
-    protected ScopeConfigInterface $scopeConfig;
-    protected LoyaltyLedgerRepositoryInterface $ledgerRepository;
-    protected LoyaltyLedgerInterfaceFactory $ledgerFactory;
-    protected SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory;
-    protected SortOrderBuilder $sortOrderBuilder;
-    protected LoggerInterface $logger;
-
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
-        LoyaltyLedgerRepositoryInterface $ledgerRepository,
-        LoyaltyLedgerInterfaceFactory $ledgerFactory,
-        SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
-        SortOrderBuilder $sortOrderBuilder,
-        LoggerInterface $logger
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly LoyaltyLedgerRepositoryInterface $ledgerRepository,
+        private readonly LoyaltyLedgerInterfaceFactory $ledgerFactory,
+        private readonly SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
+        private readonly SortOrderBuilder $sortOrderBuilder,
+        private readonly WalletLogger $logger
     ) {
-        $this->scopeConfig = $scopeConfig;
-        $this->ledgerRepository = $ledgerRepository;
-        $this->ledgerFactory = $ledgerFactory;
-        $this->searchCriteriaBuilderFactory = $searchCriteriaBuilderFactory;
-        $this->sortOrderBuilder = $sortOrderBuilder;
-        $this->logger = $logger;
     }
 
     public function execute(Observer $observer): void

@@ -1,0 +1,13 @@
+<?php
+/** @var \Codilar\LoyaltyWallet\Block\Customer\StoreWallet $block */
+?>
+
+<a
+    href="<?= $block->escapeUrl($block->getUrl('loyalty/wallet/index')) ?>"
+    class="loyalty-header-wallet"
+>
+    Wallet:
+    <strong>
+        ₹<?= $block->escapeHtml(number_format($block->getStoreWalletBalance(), 2)) ?>
+    </strong>
+</a>

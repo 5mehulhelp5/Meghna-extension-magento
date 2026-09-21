@@ -1,44 +1,28 @@
 <?php
 declare(strict_types=1);
-
 namespace Codilar\LoyaltyWallet\Observer;
 
-use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\ObserverInterface;
 use Codilar\LoyaltyWallet\Api\Data\LoyaltyLedgerInterfaceFactory;
-use Codilar\LoyaltyWallet\Api\LoyaltyLedgerRepositoryInterface;
 use Codilar\LoyaltyWallet\Api\Data\StoreWalletInterfaceFactory;
+use Codilar\LoyaltyWallet\Api\LoyaltyLedgerRepositoryInterface;
 use Codilar\LoyaltyWallet\Api\StoreWalletRepositoryInterface;
+use Codilar\LoyaltyWallet\Logger\Logger as WalletLogger;
 use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\Api\SortOrderBuilder;
-use Psr\Log\LoggerInterface;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 
 class ReverseLoyaltyPointsOnCancel implements ObserverInterface
 {
-    protected LoyaltyLedgerInterfaceFactory $ledgerFactory;
-    protected LoyaltyLedgerRepositoryInterface $ledgerRepository;
-    protected StoreWalletInterfaceFactory $storeWalletFactory;
-    protected StoreWalletRepositoryInterface $storeWalletRepository;
-    protected SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory;
-    protected SortOrderBuilder $sortOrderBuilder;
-    protected LoggerInterface $logger;
-
     public function __construct(
-        LoyaltyLedgerInterfaceFactory $ledgerFactory,
-        LoyaltyLedgerRepositoryInterface $ledgerRepository,
-        StoreWalletInterfaceFactory $storeWalletFactory,
-        StoreWalletRepositoryInterface $storeWalletRepository,
-        SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
-        SortOrderBuilder $sortOrderBuilder,
-        LoggerInterface $logger
+        private readonly LoyaltyLedgerInterfaceFactory $ledgerFactory,
+        private readonly LoyaltyLedgerRepositoryInterface $ledgerRepository,
+        private readonly StoreWalletInterfaceFactory $storeWalletFactory,
+        private readonly StoreWalletRepositoryInterface $storeWalletRepository,
+        private readonly SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
+        private readonly SortOrderBuilder $sortOrderBuilder,
+        private readonly WalletLogger $logger
     ) {
-        $this->ledgerFactory = $ledgerFactory;
-        $this->ledgerRepository = $ledgerRepository;
-        $this->storeWalletFactory = $storeWalletFactory;
-        $this->storeWalletRepository = $storeWalletRepository;
-        $this->searchCriteriaBuilderFactory = $searchCriteriaBuilderFactory;
-        $this->sortOrderBuilder = $sortOrderBuilder;
-        $this->logger = $logger;
     }
 
     public function execute(Observer $observer): void

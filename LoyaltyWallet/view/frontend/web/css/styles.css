@@ -1,0 +1,21 @@
+.codilar-loyalty-header {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 13px;
+}
+
+.codilar-loyalty-header a {
+    color: #FFFFFF;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.codilar-loyalty-header a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.codilar-loyalty-header a strong {
+    color: #fff1ad;
+}

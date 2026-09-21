@@ -1,0 +1,13 @@
+<?php
+/** @var \Codilar\LoyaltyWallet\Block\Customer\Coins $block */
+?>
+
+<a
+    href="<?= $block->escapeUrl($block->getUrl('loyalty/coins/index')) ?>"
+    class="loyalty-header-points"
+>
+    Points:
+    <strong>
+        <?= $block->escapeHtml($block->getTotalCoins()) ?>
+    </strong>
+</a>

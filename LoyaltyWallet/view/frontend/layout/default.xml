@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Codilar_LoyaltyWallet::css/styles.css" />
+    </head>
+    <body>
+
+        <referenceContainer name="header.panel">
+
+            <container
+                name="codilar.loyalty.header"
+                label="Loyalty Wallet Header"
+                htmlTag="div"
+                htmlClass="codilar-loyalty-header"
+                after="-"
+            >
+
+                <block
+                    class="Codilar\LoyaltyWallet\Block\Customer\Coins"
+                    name="codilar.header.coins"
+                    template="Codilar_LoyaltyWallet::header/coins.phtml"
+                    cacheable="false"
+                />
+
+                <block
+                    class="Codilar\LoyaltyWallet\Block\Customer\StoreWallet"
+                    name="codilar.header.wallet"
+                    template="Codilar_LoyaltyWallet::header/wallet.phtml"
+                    cacheable="false"
+                />
+
+            </container>
+
+        </referenceContainer>
+
+    </body>
+
+</page>
