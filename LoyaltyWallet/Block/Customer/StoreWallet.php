@@ -3,36 +3,25 @@ declare(strict_types=1);
 
 namespace Codilar\LoyaltyWallet\Block\Customer;
 
-use Magento\Framework\View\Element\Template;
-use Magento\Customer\Model\Session as CustomerSession;
 use Codilar\LoyaltyWallet\Api\StoreWalletRepositoryInterface;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\Api\SortOrderBuilder;
+use Magento\Framework\View\Element\Template;
 use Psr\Log\LoggerInterface;
 
 class StoreWallet extends Template
 {
-    protected CustomerSession $customerSession;
-    protected StoreWalletRepositoryInterface $storeWalletRepository;
-    protected SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory;
-    protected SortOrderBuilder $sortOrderBuilder;
-    protected LoggerInterface $logger;
-
     public function __construct(
         Template\Context $context,
-        CustomerSession $customerSession,
-        StoreWalletRepositoryInterface $storeWalletRepository,
-        SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
-        SortOrderBuilder $sortOrderBuilder,
-        LoggerInterface $logger,
+        private readonly CustomerSession $customerSession,
+        private readonly StoreWalletRepositoryInterface $storeWalletRepository,
+        private readonly SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
+        private readonly SortOrderBuilder $sortOrderBuilder,
+        private readonly LoggerInterface $logger,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->customerSession = $customerSession;
-        $this->storeWalletRepository = $storeWalletRepository;
-        $this->searchCriteriaBuilderFactory = $searchCriteriaBuilderFactory;
-        $this->sortOrderBuilder = $sortOrderBuilder;
-        $this->logger = $logger;
     }
 
     public function getCustomerId(): ?int

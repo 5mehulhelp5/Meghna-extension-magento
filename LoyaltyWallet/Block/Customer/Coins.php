@@ -12,31 +12,19 @@ use Psr\Log\LoggerInterface;
 
 class Coins extends Template
 {
-    protected CustomerSession $customerSession;
-    protected LoyaltyLedgerRepositoryInterface $ledgerRepository;
-    protected SearchCriteriaBuilder $searchCriteriaBuilder;
-    protected SortOrderBuilder $sortOrderBuilder;
-    protected LoggerInterface $logger;
-
     private ?array $transactionsCache = null;
 
     public function __construct(
         Template\Context $context,
-        CustomerSession $customerSession,
-        LoyaltyLedgerRepositoryInterface $ledgerRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        SortOrderBuilder $sortOrderBuilder,
-        LoggerInterface $logger,
+        private readonly CustomerSession $customerSession,
+        private readonly LoyaltyLedgerRepositoryInterface $ledgerRepository,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder,
+        private readonly SortOrderBuilder $sortOrderBuilder,
+        private readonly LoggerInterface $logger,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->customerSession = $customerSession;
-        $this->ledgerRepository = $ledgerRepository;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->sortOrderBuilder = $sortOrderBuilder;
-        $this->logger = $logger;
     }
-
     public function getCustomerTransactions(): array
     {
         if ($this->transactionsCache !== null) {

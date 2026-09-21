@@ -7,6 +7,7 @@ use Codilar\LoyaltyWallet\Api\Data\LoyaltyLedgerInterfaceFactory;
 use Codilar\LoyaltyWallet\Api\Data\StoreWalletInterfaceFactory;
 use Codilar\LoyaltyWallet\Api\LoyaltyLedgerRepositoryInterface;
 use Codilar\LoyaltyWallet\Api\StoreWalletRepositoryInterface;
+use Codilar\LoyaltyWallet\Logger\Logger as WalletLogger;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\Api\SortOrderBuilder;
@@ -14,7 +15,6 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Message\ManagerInterface;
-use Psr\Log\LoggerInterface;
 
 class Convert implements HttpPostActionInterface
 {
@@ -29,7 +29,7 @@ class Convert implements HttpPostActionInterface
         private readonly StoreWalletInterfaceFactory $storeWalletFactory,
         private readonly SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
         private readonly SortOrderBuilder $sortOrderBuilder,
-        private readonly LoggerInterface $logger
+        private readonly WalletLogger $logger
     ) {
     }
 
@@ -40,17 +40,13 @@ class Convert implements HttpPostActionInterface
 
         // 1. Check if user is logged in
         if (!$this->customerSession->isLoggedIn()) {
-            $this->logger->info('LoyaltyWallet Conversion: Blocked guest user conversion attempt.');
             return $this->resultRedirectFactory->create()->setPath('customer/account/login');
         }
 
         $customerId = (int)$this->customerSession->getCustomerId();
         $coinsToConvert = (int)$this->request->getParam('coins_to_convert');
 
-        $this->logger->info("LoyaltyWallet Conversion: Request initiated for Customer ID {$customerId} to convert {$coinsToConvert} coins.");
-
         if ($coinsToConvert <= 0) {
-            $this->logger->warning("LoyaltyWallet Conversion: Invalid coin amount specified ({$coinsToConvert}) by Customer ID {$customerId}.");
             $this->messageManager->addErrorMessage(__('Please specify a valid coin amount to convert.'));
             return $redirect;
         }
@@ -68,13 +64,9 @@ class Convert implements HttpPostActionInterface
             $latestTransaction = !empty($transactions) ? reset($transactions) : null;
 
             $availableCoins = $latestTransaction ? (int)$latestTransaction->getBalanceAfter() : 0;
-            // Prevent negative balance computation
             $availableCoins = max(0, $availableCoins);
 
-            $this->logger->info("LoyaltyWallet Conversion: Latest balance_after fetched for Customer ID {$customerId} is {$availableCoins}.");
-
             if ($coinsToConvert > $availableCoins) {
-                $this->logger->warning("LoyaltyWallet Conversion: Insufficient balance. Customer ID {$customerId} tried to convert {$coinsToConvert}, but only has {$availableCoins}.");
                 $this->messageManager->addErrorMessage(__('You do not have enough coins to convert this amount. (Available: %1)', $availableCoins));
                 return $redirect;
             }
@@ -91,8 +83,6 @@ class Convert implements HttpPostActionInterface
             $loyaltyEntry->setComment('Converted to Store Wallet');
             $this->loyaltyLedgerRepository->save($loyaltyEntry);
 
-            $this->logger->info("LoyaltyWallet Conversion: Deducted {$coinsToConvert} coins for Customer ID {$customerId}. New coin balance after: {$newCoinBalance}.");
-
             // 5. Fetch latest Store Wallet Balance
             $walletScBuilder = $this->searchCriteriaBuilderFactory->create();
             $walletScBuilder->addFilter('customer_id', $customerId);
@@ -102,23 +92,36 @@ class Convert implements HttpPostActionInterface
             $walletList = $this->storeWalletRepository->getList($walletScBuilder->create())->getItems();
             $latestWallet = !empty($walletList) ? reset($walletList) : null;
             $currentWalletBalance = $latestWallet ? (float)$latestWallet->getBalanceAfter() : 0.0;
-
-            $this->logger->info("LoyaltyWallet Conversion: Current cash wallet balance before credit for Customer ID {$customerId} is {$currentWalletBalance}.");
+            $newWalletBalance = $currentWalletBalance + $walletAmount;
 
             // 6. Credit Store Wallet Ledger (Create positive cash entry)
             $walletEntry = $this->storeWalletFactory->create();
             $walletEntry->setCustomerId($customerId);
             $walletEntry->setAmount($walletAmount);
-            $walletEntry->setBalanceAfter($currentWalletBalance + $walletAmount);
+            $walletEntry->setBalanceAfter($newWalletBalance);
             $walletEntry->setComment('Converted from Loyalty Coins');
 
             $this->storeWalletRepository->save($walletEntry);
 
-            $this->logger->info("LoyaltyWallet Conversion: Successfully credited ₹{$walletAmount} to store cash wallet for Customer ID {$customerId}. New cash balance after: " . ($currentWalletBalance + $walletAmount));
+            // Essential Financial Success Audit Log (Writes directly to var/log/codilar_wallet.log)
+            $this->logger->info(sprintf(
+                'SUCCESS: Customer ID %d converted %d coins into ₹%.2f wallet cash. New Coin Balance: %d, New Wallet Balance: ₹%.2f',
+                $customerId,
+                $coinsToConvert,
+                $walletAmount,
+                $newCoinBalance,
+                $newWalletBalance
+            ));
 
             $this->messageManager->addSuccessMessage(__('Successfully converted %1 coins into ₹%2 store wallet cash!', $coinsToConvert, number_format($walletAmount, 2)));
         } catch (\Exception $e) {
-            $this->logger->error('LoyaltyWallet Conversion Exception for Customer ID ' . $customerId . ': ' . $e->getMessage());
+            // Essential Error Audit Log
+            $this->logger->error(sprintf(
+                'FAILURE: Conversion failed for Customer ID %d. Reason: %s',
+                $customerId,
+                $e->getMessage()
+            ));
+
             $this->messageManager->addErrorMessage(__('Conversion failed: %1', $e->getMessage()));
         }
 
