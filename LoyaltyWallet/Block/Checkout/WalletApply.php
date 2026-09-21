@@ -3,22 +3,23 @@ declare(strict_types=1);
 
 namespace Codilar\LoyaltyWallet\Block\Checkout;
 
-use Magento\Framework\View\Element\Template;
-use Magento\Customer\Model\Session as CustomerSession;
 use Codilar\LoyaltyWallet\Api\LoyaltyLedgerRepositoryInterface;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\Api\SortOrderBuilder;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\View\Element\Template;
 use Psr\Log\LoggerInterface;
 
 class WalletApply extends Template
 {
-
     public function __construct(
         Template\Context $context,
         private readonly CustomerSession $customerSession,
         private readonly LoyaltyLedgerRepositoryInterface $ledgerRepository,
         private readonly SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
         private readonly SortOrderBuilder $sortOrderBuilder,
+        private readonly ResourceConnection $resourceConnection,
         private readonly ?LoggerInterface $logger = null,
         array $data = []
     ) {
@@ -33,12 +34,12 @@ class WalletApply extends Template
 
         $customerId = (int)$this->customerSession->getCustomerId();
 
-        // Direct database fallback query
         try {
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $resource = $objectManager->get(\Magento\Framework\App\ResourceConnection::class);
-            $connection = $resource->getConnection();
-            $tableName = $resource->getTableName('codilar_store_wallet_ledger'); // Change to your exact table name if different
+            $connection = $this->resourceConnection->getConnection();
+
+            $tableName = $this->resourceConnection->getTableName(
+                'codilar_store_wallet_ledger'
+            );
 
             $select = $connection->select()
                 ->from($tableName, ['balance_after'])
@@ -47,8 +48,16 @@ class WalletApply extends Template
                 ->limit(1);
 
             $balance = $connection->fetchOne($select);
+
             return $balance !== false ? (float)$balance : 0.0;
+
         } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->error(
+                    'Unable to fetch wallet balance: ' . $e->getMessage()
+                );
+            }
+
             return 0.0;
         }
     }

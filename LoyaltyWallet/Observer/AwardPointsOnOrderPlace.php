@@ -11,6 +11,7 @@ use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Store\Model\ScopeInterface;
 
 class AwardPointsOnOrderPlace implements ObserverInterface
 {
@@ -28,20 +29,26 @@ class AwardPointsOnOrderPlace implements ObserverInterface
     {
         try {
             $order = $observer->getEvent()->getOrder();
+
             if (!$order || !$order->getCustomerId()) {
-                $this->logger->info('Loyalty: Skipped (Guest order or missing order object).');
+                $this->logger->info(
+                    'Loyalty: Skipped (Guest order or missing order object).'
+                );
                 return;
             }
 
             $storeId = (int)$order->getStoreId();
             $subtotal = (float)$order->getSubtotal();
+            $customerId = (int)$order->getCustomerId();
 
             if ($subtotal <= 0) {
-                $this->logger->info('Loyalty: Skipped (Subtotal is zero or negative).');
+                $this->logger->info(
+                    'Loyalty: Skipped (Subtotal is zero or negative).'
+                );
                 return;
             }
 
-            // Fetch configurable rate (ensuring lowercase path matching config.xml)
+            // Get points earning rate from store configuration
             $rate = (float)$this->scopeConfig->getValue(
                 'codilar_loyalty/general/points_per_currency',
                 ScopeInterface::SCOPE_STORE,
@@ -51,47 +58,78 @@ class AwardPointsOnOrderPlace implements ObserverInterface
             $pointsEarned = (int)floor($subtotal * $rate);
 
             if ($pointsEarned <= 0) {
-                $this->logger->info("Loyalty: Skipped. Calculated points <= 0 (Subtotal: {$subtotal}, Rate: {$rate}). Check if configuration is set.");
+                $this->logger->info(
+                    "Loyalty: Skipped. Calculated points <= 0. " .
+                    "Subtotal: {$subtotal}, Rate: {$rate}"
+                );
                 return;
             }
 
-            $customerId = (int)$order->getCustomerId();
-
-            // 1. Get the latest transaction entry for this customer using sort order
+            /*
+             * Get customer's latest loyalty ledger entry.
+             */
             $sortOrder = $this->sortOrderBuilder
                 ->setField('entity_id')
                 ->setDescendingDirection()
                 ->create();
 
-            $searchCriteria = $this->searchCriteriaBuilderFactory->create()
+            $searchCriteria = $this->searchCriteriaBuilderFactory
+                ->create()
                 ->addFilter('customer_id', $customerId)
                 ->addSortOrder($sortOrder)
                 ->setPageSize(1)
                 ->create();
 
-            $collection = $this->ledgerRepository->getList($searchCriteria)->getItems();
-            $latestRecord = reset($collection);
+            $transactions = $this->ledgerRepository
+                ->getList($searchCriteria)
+                ->getItems();
 
-            // 2. Take the previous balance_after, or 0 if this is their first order
-            $currentBalance = $latestRecord ? (int)$latestRecord->getBalanceAfter() : 0;
+            $latestRecord = reset($transactions);
 
-            // 3. Add the newly earned points
+            /*
+             * Get previous balance.
+             */
+            $currentBalance = $latestRecord
+                ? (int)$latestRecord->getBalanceAfter()
+                : 0;
+
+            /*
+             * Add newly earned points.
+             */
             $newBalanceAfter = $currentBalance + $pointsEarned;
 
-            // Save ledger transaction record
+            /*
+             * Create a new immutable ledger entry.
+             */
             $ledger = $this->ledgerFactory->create();
+
             $ledger->setCustomerId($customerId);
-            $ledger->setOrderIncrementId($order->getIncrementId());
+            $ledger->setOrderIncrementId(
+                (string)$order->getIncrementId()
+            );
             $ledger->setQuantity($pointsEarned);
-            $ledger->setBalanceAfter($newBalanceAfter); // This will now correctly save the cumulative sum!
+            $ledger->setBalanceAfter($newBalanceAfter);
 
             $this->ledgerRepository->save($ledger);
 
-            $this->logger->info('Loyalty: Successfully awarded ' . $pointsEarned . ' points for order ' . $order->getIncrementId() . '. New balance: ' . $newBalanceAfter);
+            $this->logger->info(
+                'Loyalty: Successfully awarded ' .
+                $pointsEarned .
+                ' points for order ' .
+                $order->getIncrementId() .
+                '. New balance: ' .
+                $newBalanceAfter
+            );
 
         } catch (\Exception $e) {
-            // Catches any exception so the checkout process never breaks or rolls back
-            $this->logger->error('Loyalty Accrual Exception: ' . $e->getMessage());
+
+            /*
+             * Loyalty point failure should not break checkout.
+             */
+            $this->logger->error(
+                'Loyalty Accrual Exception: ' .
+                $e->getMessage()
+            );
         }
     }
 }
