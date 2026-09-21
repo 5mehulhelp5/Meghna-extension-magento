@@ -3,15 +3,16 @@ declare(strict_types=1);
 
 namespace Codilar\LoyaltyWallet\Observer;
 
+use Codilar\LoyaltyWallet\Logger\Logger as WalletLogger;
+use Exception;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 class DeductWalletOnOrderPlace implements ObserverInterface
 {
-    public function __construct(private readonly ResourceConnection $resourceConnection, private readonly LoggerInterface $logger)
+    public function __construct(private readonly ResourceConnection $resourceConnection, private readonly WalletLogger $logger)
     {
     }
 
@@ -19,75 +20,58 @@ class DeductWalletOnOrderPlace implements ObserverInterface
     {
         try {
             $event = $observer->getEvent();
-
             $order = $event->getData('order');
 
             if (!$order) {
                 $this->logger->error('WALLET DEDUCTION: Order is missing from event.');
-
                 return;
             }
 
             $orderId = (int)$order->getId();
             $incrementId = (string)$order->getIncrementId();
             $customerId = (int)$order->getCustomerId();
-
             $walletAmount = (float)$order->getData('applied_wallet_amount');
 
-            $this->logger->info('WALLET DEDUCTION STARTED' . ' | Order ID: ' . $orderId . ' | Increment ID: ' . $incrementId . ' | Customer ID: ' . $customerId . ' | Wallet Amount: ' . $walletAmount);
-
-            if ($walletAmount <= 0) {
-                $this->logger->info('WALLET DEDUCTION SKIPPED: Wallet amount is zero.');
-
-                return;
-            }
-
-            if ($customerId <= 0) {
-                $this->logger->info('WALLET DEDUCTION SKIPPED: Customer ID is invalid.');
-
-                return;
+            if ($walletAmount <= 0 || $customerId <= 0) {
+                return; // Skip silently if no wallet amount was used or customer is invalid
             }
 
             $connection = $this->resourceConnection->getConnection();
-
             $tableName = $this->resourceConnection->getTableName('codilar_store_wallet_ledger');
 
-            /*
-             * Get latest wallet balance.
-             */
-            $select = $connection->select()->from($tableName, ['balance_after'])->where('customer_id = ?', $customerId)->order('entity_id DESC')->limit(1);
+            // Start Transaction with For Update lock to prevent race conditions during checkout
+            $connection->beginTransaction();
 
-            $currentBalance = $connection->fetchOne($select);
+            try {
+                // Get latest wallet balance with a lock
+                $select = $connection->select()->from($tableName, ['balance_after'])->where('customer_id = ?', $customerId)->order('entity_id DESC')->limit(1)->forUpdate();
 
-            $currentBalance = $currentBalance !== false ? (float)$currentBalance : 0.0;
+                $currentBalance = $connection->fetchOne($select);
+                $currentBalance = $currentBalance !== false ? (float)$currentBalance : 0.0;
 
-            $this->logger->info('WALLET CURRENT BALANCE' . ' | Customer ID: ' . $customerId . ' | Balance: ' . $currentBalance);
+                if ($walletAmount > $currentBalance) {
+                    throw new Exception(sprintf('Insufficient wallet balance. Requested: %.2f, Available: %.2f', $walletAmount, $currentBalance));
+                }
 
-            /*
-             * Make sure wallet has enough balance.
-             */
-            if ($walletAmount > $currentBalance) {
-                $this->logger->error('WALLET DEDUCTION FAILED' . ' | Requested: ' . $walletAmount . ' | Available: ' . $currentBalance);
+                $newBalance = $currentBalance - $walletAmount;
+                $comment = 'Wallet amount deducted from purchase - Order #' . $incrementId;
 
-                return;
+                // Create wallet debit transaction
+                $connection->insert($tableName, ['customer_id' => $customerId, 'amount' => -$walletAmount, 'balance_after' => $newBalance, 'comment' => $comment]);
+
+                $connection->commit();
+
+                // Essential Financial Success Audit Log (Goes to var/log/codilar_wallet.log)
+                $this->logger->info(sprintf('SUCCESS: Deducted ₹%.2f from Customer ID %d for Order #%s. Old Balance: ₹%.2f, New Balance: ₹%.2f', $walletAmount, $customerId, $incrementId, $currentBalance, $newBalance));
+
+            } catch (Exception $innerEx) {
+                $connection->rollBack();
+                throw $innerEx;
             }
 
-            $newBalance = $currentBalance - $walletAmount;
-
-            /*
-             * Comment for wallet transaction.
-             */
-            $comment = 'Wallet amount deducted from purchase - Order #' . $incrementId;
-
-            /*
-             * Create wallet debit transaction.
-             */
-            $connection->insert($tableName, ['customer_id' => $customerId, 'amount' => -$walletAmount, 'balance_after' => $newBalance, 'comment' => $comment]);
-
-            $this->logger->info('WALLET DEDUCTION SUCCESSFUL' . ' | Order: ' . $incrementId . ' | Deducted: ' . $walletAmount . ' | Old Balance: ' . $currentBalance . ' | New Balance: ' . $newBalance . ' | Comment: ' . $comment);
-
         } catch (Throwable $e) {
-            $this->logger->error('WALLET DEDUCTION ERROR: ' . $e->getMessage());
+            // Essential Error Audit Log
+            $this->logger->error(sprintf('FAILURE: Wallet deduction failed for Order #%s. Reason: %s', $incrementId ?? 'UNKNOWN', $e->getMessage()));
         }
     }
 }
