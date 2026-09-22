@@ -28,6 +28,11 @@ class LoyaltyLedgerRepository implements LoyaltyLedgerRepositoryInterface
         $this->searchResultsFactory = $searchResultsFactory;
     }
 
+    /**
+     * @param LoyaltyLedgerInterface $ledger
+     * @return LoyaltyLedgerInterface
+     * @throws CouldNotSaveException
+     */
     public function save(LoyaltyLedgerInterface $ledger): LoyaltyLedgerInterface
     {
         try {
@@ -38,6 +43,10 @@ class LoyaltyLedgerRepository implements LoyaltyLedgerRepositoryInterface
         return $ledger;
     }
 
+    /**
+     * @param SearchCriteriaInterface $searchCriteria
+     * @return SearchResultsInterface
+     */
     public function getList(SearchCriteriaInterface $searchCriteria): SearchResultsInterface
     {
         $collection = $this->collectionFactory->create();

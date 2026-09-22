@@ -6,6 +6,11 @@ use Magento\Framework\View\Element\Template;
 class Ledger extends Template
 {
 
+    /**
+     * @param string $createdAt
+     * @return string
+     * @throws \DateMalformedStringException
+     */
     public function getExpiryDate(string $createdAt): string
     {
         $date = new \DateTime($createdAt);

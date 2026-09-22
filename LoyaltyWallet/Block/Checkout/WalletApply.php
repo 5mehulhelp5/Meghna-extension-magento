@@ -18,6 +18,10 @@ class WalletApply extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * @return float
+     */
+
     public function getCustomerBalance(): float
     {
         if (!$this->customerSession->isLoggedIn()) {

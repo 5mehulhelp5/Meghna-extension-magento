@@ -20,7 +20,10 @@ class Wallet extends AbstractTotal
     }
 
     /**
-     * Collect wallet total.
+     * @param Quote $quote
+     * @param ShippingAssignment|ShippingAssignmentInterface $shippingAssignment
+     * @param Total $total
+     * @return $this
      */
     public function collect(Quote $quote, ShippingAssignment|ShippingAssignmentInterface $shippingAssignment, Total $total): self
     {
@@ -79,7 +82,9 @@ class Wallet extends AbstractTotal
     }
 
     /**
-     * Display wallet in checkout totals.
+     * @param Quote $quote
+     * @param Total $total
+     * @return array|null
      */
     public function fetch(Quote $quote, Total $total): ?array
     {

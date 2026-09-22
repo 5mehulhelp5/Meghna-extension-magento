@@ -19,6 +19,10 @@ class SuccessPoints extends Template
     ) {
         parent::__construct($context, $data);
     }
+
+    /**
+     * @return int
+     */
     public function getPointsEarned(): int
     {
         $order = $this->checkoutSession->getLastRealOrder();

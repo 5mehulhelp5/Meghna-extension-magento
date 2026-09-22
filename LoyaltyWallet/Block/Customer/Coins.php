@@ -20,6 +20,10 @@ class Coins extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * @return int
+     */
+
     public function getTotalCoins(): int
     {
         $transactions = $this->getCustomerTransactions();

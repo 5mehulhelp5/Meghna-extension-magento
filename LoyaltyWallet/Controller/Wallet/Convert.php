@@ -83,7 +83,6 @@ class Convert implements HttpPostActionInterface
             $loyaltyEntry->setComment('Converted to Store Wallet');
             $this->loyaltyLedgerRepository->save($loyaltyEntry);
 
-            // 5. Fetch latest Store Wallet Balance
             $walletScBuilder = $this->searchCriteriaBuilderFactory->create();
             $walletScBuilder->addFilter('customer_id', $customerId);
             $walletSortOrder = $this->sortOrderBuilder->setField('entity_id')->setDescendingDirection()->create();
@@ -94,7 +93,6 @@ class Convert implements HttpPostActionInterface
             $currentWalletBalance = $latestWallet ? (float)$latestWallet->getBalanceAfter() : 0.0;
             $newWalletBalance = $currentWalletBalance + $walletAmount;
 
-            // 6. Credit Store Wallet Ledger (Create positive cash entry)
             $walletEntry = $this->storeWalletFactory->create();
             $walletEntry->setCustomerId($customerId);
             $walletEntry->setAmount($walletAmount);
@@ -115,7 +113,7 @@ class Convert implements HttpPostActionInterface
 
             $this->messageManager->addSuccessMessage(__('Successfully converted %1 coins into ₹%2 store wallet cash!', $coinsToConvert, number_format($walletAmount, 2)));
         } catch (\Exception $e) {
-            // Essential Error Audit Log
+
             $this->logger->error(sprintf(
                 'FAILURE: Conversion failed for Customer ID %d. Reason: %s',
                 $customerId,

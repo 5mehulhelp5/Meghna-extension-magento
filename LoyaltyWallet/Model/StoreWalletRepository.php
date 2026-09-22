@@ -16,21 +16,12 @@ use Magento\Framework\Exception\CouldNotDeleteException;
 
 class StoreWalletRepository implements StoreWalletRepositoryInterface
 {
-    protected ResourceStoreWallet $resource;
-    protected StoreWalletInterfaceFactory $storeWalletFactory;
-    protected CollectionFactory $collectionFactory;
-    protected CollectionProcessorInterface $collectionProcessor;
-
     public function __construct(
-        ResourceStoreWallet $resource,
-        StoreWalletInterfaceFactory $storeWalletFactory,
-        CollectionFactory $collectionFactory,
-        CollectionProcessorInterface $collectionProcessor
+        private readonly ResourceStoreWallet $resource,
+        private readonly StoreWalletInterfaceFactory $storeWalletFactory,
+        private readonly CollectionFactory $collectionFactory,
+        private readonly CollectionProcessorInterface $collectionProcessor
     ) {
-        $this->resource = $resource;
-        $this->storeWalletFactory = $storeWalletFactory;
-        $this->collectionFactory = $collectionFactory;
-        $this->collectionProcessor = $collectionProcessor;
     }
 
     public function save(StoreWalletInterface $wallet): StoreWalletInterface

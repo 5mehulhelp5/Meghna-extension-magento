@@ -24,6 +24,9 @@ class StoreWallet extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * @return int|null
+     */
     public function getCustomerId(): ?int
     {
         if (!$this->customerSession->isLoggedIn()) {
@@ -33,7 +36,7 @@ class StoreWallet extends Template
     }
 
     /**
-     * Fetch full transaction history for Store Cash Wallet
+     * @return array
      */
     public function getStoreWalletTransactions(): array
     {
