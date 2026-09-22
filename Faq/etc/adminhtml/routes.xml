@@ -1,0 +1,5 @@
+<router id="admin">
+    <route id="codilar_faq" frontName="codilar_faq">
+        <module name="Codilar_Faq" before="Magento_Backend"/>
+    </route>
+</router>

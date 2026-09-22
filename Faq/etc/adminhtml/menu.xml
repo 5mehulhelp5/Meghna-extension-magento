@@ -1,0 +1,6 @@
+<add id="Codilar_Faq::faq"
+     title="FAQ"
+     module="Codilar_Faq"
+     sortOrder="90"
+     resource="Codilar_Faq::faq"
+     action="codilar_faq/faq/index"/>
