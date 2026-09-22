@@ -10,18 +10,15 @@ use Magento\Framework\View\Element\Template;
 
 class SuccessPoints extends Template
 {
-    protected CheckoutSession $checkoutSession;
-    protected LoyaltyLedgerRepositoryInterface $ledgerRepository;
-    protected SearchCriteriaBuilder $searchCriteriaBuilder;
-
-    public function __construct(Template\Context $context, CheckoutSession $checkoutSession, LoyaltyLedgerRepositoryInterface $ledgerRepository, SearchCriteriaBuilder $searchCriteriaBuilder, array $data = [])
-    {
+    public function __construct(
+        Template\Context $context,
+        private readonly CheckoutSession $checkoutSession,
+        private readonly LoyaltyLedgerRepositoryInterface $ledgerRepository,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder,
+        array $data = []
+    ) {
         parent::__construct($context, $data);
-        $this->checkoutSession = $checkoutSession;
-        $this->ledgerRepository = $ledgerRepository;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
-
     public function getPointsEarned(): int
     {
         $order = $this->checkoutSession->getLastRealOrder();

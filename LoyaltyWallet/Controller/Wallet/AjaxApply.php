@@ -12,11 +12,11 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Psr\Log\LoggerInterface;
+use Codilar\LoyaltyWallet\Logger\Logger as WalletLogger;
 
 class AjaxApply implements HttpPostActionInterface
 {
-    public function __construct(private readonly JsonFactory $resultJsonFactory, private readonly RequestInterface $request, private readonly CheckoutSession $checkoutSession, private readonly CustomerSession $customerSession, private readonly ResourceConnection $resourceConnection, private readonly LoggerInterface $logger)
+    public function __construct(private readonly JsonFactory $resultJsonFactory, private readonly RequestInterface $request, private readonly CheckoutSession $checkoutSession, private readonly CustomerSession $customerSession, private readonly ResourceConnection $resourceConnection, private readonly WalletLogger $logger)
     {
     }
 
