@@ -8,7 +8,7 @@ use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\View\Element\Template;
-use Psr\Log\LoggerInterface;
+use Codilar\LoyaltyWallet\Logger\Logger as WalletLogger;
 
 class StoreWallet extends Template
 {
@@ -18,7 +18,7 @@ class StoreWallet extends Template
         private readonly StoreWalletRepositoryInterface $storeWalletRepository,
         private readonly SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
         private readonly SortOrderBuilder $sortOrderBuilder,
-        private readonly LoggerInterface $logger,
+        private readonly WalletLogger $logger,
         array $data = []
     ) {
         parent::__construct($context, $data);
