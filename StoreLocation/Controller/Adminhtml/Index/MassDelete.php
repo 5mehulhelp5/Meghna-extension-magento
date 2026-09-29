@@ -28,9 +28,6 @@ class MassDelete extends Action
             ResultFactory::TYPE_REDIRECT
         );
 
-        /*
-         * Single delete
-         */
         $singleId = $this->getRequest()->getParam('store_id');
 
         if ($singleId) {
@@ -49,9 +46,6 @@ class MassDelete extends Action
             return $resultRedirect->setPath('*/*/index');
         }
 
-        /*
-         * Mass delete
-         */
         try {
             $collection = $this->filter->getCollection(
                 $this->collectionFactory->create()
