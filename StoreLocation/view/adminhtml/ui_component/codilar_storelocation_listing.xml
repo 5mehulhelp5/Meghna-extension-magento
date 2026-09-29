@@ -126,8 +126,21 @@
                 <label translate="true">City</label>
             </settings>
         </column>
+        <column name="image"
+                class="Codilar\StoreLocation\Ui\Component\Listing\Column\StoreImage"
+                component="Magento_Ui/js/grid/columns/thumbnail"
+                sortOrder="50">
 
-        <actionsColumn name="actions" class="Codilar\StoreLocation\Ui\Component\Listing\Column\StoreActions" sortOrder="50">
+            <settings>
+                <altField>name</altField>
+                <hasPreview>1</hasPreview>
+                <label translate="true">Store Image</label>
+                <sortable>false</sortable>
+            </settings>
+
+        </column>
+
+        <actionsColumn name="actions" class="Codilar\StoreLocation\Ui\Component\Listing\Column\StoreActions" sortOrder="60">
             <settings>
                 <indexField>store_id</indexField>
                 <label translate="true">Action</label>
