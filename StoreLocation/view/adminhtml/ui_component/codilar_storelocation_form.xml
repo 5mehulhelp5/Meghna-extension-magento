@@ -7,6 +7,7 @@
         <item name="template" xsi:type="string">templates/form/collapsible</item>
         <item name="buttons" xsi:type="array">
             <item name="back" xsi:type="string">Codilar\StoreLocation\Block\Adminhtml\Store\Edit\BackButton</item>
+
             <item name="save" xsi:type="string">Codilar\StoreLocation\Block\Adminhtml\Store\Edit\SaveButton</item>
         </item>
     </argument>

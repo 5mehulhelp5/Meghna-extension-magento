@@ -25,15 +25,18 @@ app/code/Codilar/StoreLocation/
 │   │   ├── StoreInterface.php
 │   │   └── StoreApiResponseInterface.php
 │   └── StoreRepositoryInterface.php
-├── Block/                              # View Presentation & Template Logic
-│   └── StoreList.php
 ├── Controller/                         # Request Handlers & Action Logic
-│   └── Index/
-│       ├── Form.php                    # Renders the store submission form
-│       ├── Index.php                   # Renders the main store locator listing page
-│       ├── Save.php                    # Handles persistence and image uploads
-│       └── Success.php                 # Renders the post-submission success page
-├── Model/                              # Business Logic, Entities, & Database Operations
+│   └── Adminhtml/                      # Admin Controllers (Grid, Save, Delete, MassDelete, Upload)
+│       └── Index/
+│           ├── Index.php
+│           ├── NewAction.php
+│           ├── Edit.php
+│           ├── Save.php
+│           ├── Delete.php
+│           ├── MassDelete.php
+│           └── Upload.php
+├── Model/                              # Business Logic, Entities, Uploader, & Database Operations
+│   ├── ImageUploader.php
 │   ├── ResourceModel/
 │   │   ├── Store/
 │   │   │   ├── Collection.php
@@ -42,20 +45,24 @@ app/code/Codilar/StoreLocation/
 │   ├── Store.php
 │   ├── StoreApiResponse.php
 │   └── StoreRepository.php
+├── Ui/                                 # Admin UI Component Providers & Data Providers
+│   └── Component/
+│       └── DataSource/
+│           └── StoreDataProvider.php
 ├── etc/                                # Module Configuration & Routing XMLs
 │   ├── acl.xml                         # Admin access control list rules
 │   ├── module.xml                      # Module declaration
-│   ├── routes.xml                      # Frontend router configuration
+│   ├── routes.xml                      # Admin router configuration
 │   └── webapi.xml                      # REST API route mappings
-├── view/                               # Frontend Layouts, Styles, and Templates
-│   └── frontend/
+├── view/                               # Admin layouts and UI Component definitions
+│   └── adminhtml/
 │       ├── layout/
-│       │   ├── stores_index_form.xml
-│       │   ├── stores_index_index.xml
-│       │   └── stores_index_success.xml
-│       └── templates/
-│           ├── form.phtml
-│           └── storelist.phtml
+│       │   └── storelocation_index_index.xml
+│       │   └── storelocation_index_edit.xml
+             └── storelocation_index_new.xml
+│       └── ui_component/
+│           └── store_location_listing.xml
+│           └── store_location_form.xml
 └── composer.json                       # Module Dependency Declaration
 
 
