@@ -10,32 +10,30 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
-
 class DataProvider extends AbstractDataProvider
 {
     private ?array $loadedData = null;
-    private DataPersistorInterface $dataPersistor;
-    private RequestInterface $request;
-    private StoreManagerInterface $storeManager;
 
     public function __construct(
         string $name,
         string $primaryFieldName,
         string $requestFieldName,
         CollectionFactory $collectionFactory,
-        DataPersistorInterface $dataPersistor,
-        RequestInterface $request,
-        StoreManagerInterface $storeManager,
+        private readonly DataPersistorInterface $dataPersistor,
+        private readonly RequestInterface $request,
+        private readonly StoreManagerInterface $storeManager,
         array $meta = [],
         array $data = []
     ) {
         $this->collection = $collectionFactory->create();
-        $this->dataPersistor = $dataPersistor;
-        $this->request = $request;
-        $this->storeManager = $storeManager;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
+    /**
+     * Get data for the form
+     *
+     * @return array
+     */
     public function getData(): array
     {
         if ($this->loadedData !== null) {

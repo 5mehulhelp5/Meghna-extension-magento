@@ -16,32 +16,19 @@ use Throwable;
 
 class ImageUploader
 {
-    private Filesystem $filesystem;
-
-    private UploaderFactory $uploaderFactory;
-
-    private StoreManagerInterface $storeManager;
-
-    private LoggerInterface $logger;
-
     private WriteInterface $mediaDirectory;
-
     private string $baseTmpPath = 'store_locations/tmp/image';
-
     private string $basePath = 'store_locations/image';
-
     private array $allowedExtensions = ['jpg', 'jpeg', 'gif', 'png'];
 
-    public function __construct(Filesystem $filesystem, UploaderFactory $uploaderFactory, StoreManagerInterface $storeManager, LoggerInterface $logger)
-    {
-        $this->filesystem = $filesystem;
-        $this->uploaderFactory = $uploaderFactory;
-        $this->storeManager = $storeManager;
-        $this->logger = $logger;
-
-        $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+    public function __construct(
+        private readonly Filesystem $filesystem,
+        private readonly UploaderFactory $uploaderFactory,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly LoggerInterface $logger
+    ) {
+        $this->mediaDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
     }
-
     /**
      * Upload image to temporary directory
      */
@@ -145,6 +132,11 @@ class ImageUploader
         $this->mediaDirectory->renameFile($tmpImageRelativePath, $destinationRelativePath);
 
         $this->logger->info('ImageUploader: Image successfully moved to ' . $destinationRelativePath);
+
+        if ($this->mediaDirectory->isExist($tmpImageRelativePath)) {
+            $this->mediaDirectory->delete($tmpImageRelativePath);
+            $this->logger->info('ImageUploader: Temporary image deleted from tmp folder: ' . $tmpImageRelativePath);
+        }
 
         return $imageName;
     }
