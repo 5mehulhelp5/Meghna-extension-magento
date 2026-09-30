@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Codilar\StoreLocation\Controller\Adminhtml\Index;
 
 use Codilar\StoreLocation\Model\ImageUploader;
-use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -23,15 +22,17 @@ class Upload extends Action implements HttpPostActionInterface
         parent::__construct($context);
     }
 
+    /**
+     * @return Json
+     */
     public function execute(): Json
     {
         try {
-            $this->logger->info('StoreLocation Upload Request Started');
 
             $result = $this->imageUploader->saveFileToTmpDir('image');
 
             if (!$result) {
-                throw new Exception(__('Something went wrong while saving the file.'));
+                throw new LocalizedException(__('Something went wrong while saving the file.'));
             }
 
             $result['cookie'] = ['name' => $this->_getSession()->getName(), 'value' => $this->_getSession()->getSessionId(), 'lifetime' => (int)$this->_getSession()->getCookieLifetime(), 'path' => $this->_getSession()->getCookiePath(), 'domain' => $this->_getSession()->getCookieDomain()];
