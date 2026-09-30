@@ -112,24 +112,10 @@
                 <label translate="true">Store Name</label>
             </settings>
         </column>
-
-        <column name="address" sortOrder="30">
-            <settings>
-                <filter>text</filter>
-                <label translate="true">Address</label>
-            </settings>
-        </column>
-
-        <column name="city" sortOrder="40">
-            <settings>
-                <filter>text</filter>
-                <label translate="true">City</label>
-            </settings>
-        </column>
         <column name="image"
                 class="Codilar\StoreLocation\Ui\Component\Listing\Column\StoreImage"
                 component="Magento_Ui/js/grid/columns/thumbnail"
-                sortOrder="50">
+                sortOrder="30">
 
             <settings>
                 <altField>name</altField>
@@ -140,7 +126,28 @@
 
         </column>
 
-        <actionsColumn name="actions" class="Codilar\StoreLocation\Ui\Component\Listing\Column\StoreActions" sortOrder="60">
+        <column name="address" sortOrder="40">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Address</label>
+            </settings>
+        </column>
+
+        <column name="city" sortOrder="50">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">City</label>
+            </settings>
+        </column>
+
+        <column name="opening_hours" sortOrder="60">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Opening Hours</label>
+            </settings>
+        </column>
+
+        <actionsColumn name="actions" class="Codilar\StoreLocation\Ui\Component\Listing\Column\StoreActions" sortOrder="70">
             <settings>
                 <indexField>store_id</indexField>
                 <label translate="true">Action</label>
