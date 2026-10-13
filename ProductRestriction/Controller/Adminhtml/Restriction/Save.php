@@ -9,23 +9,14 @@ use Psr\Log\LoggerInterface;
 
 class Save extends Action
 {
-    protected $dataPersistor;
-    protected $productRestrictionRepository;
-    protected $productRestrictionFactory;
-    protected $logger;
-
     public function __construct(
-        Action\Context $context,
-        DataPersistorInterface $dataPersistor,
-        ProductRestrictionRepositoryInterface $productRestrictionRepository,
-        ProductRestrictionInterfaceFactory $productRestrictionFactory,
-        LoggerInterface $logger
+        protected readonly Action\Context $context,
+        protected readonly DataPersistorInterface $dataPersistor,
+        protected readonly ProductRestrictionRepositoryInterface $productRestrictionRepository,
+        protected readonly ProductRestrictionInterfaceFactory $productRestrictionFactory,
+        protected readonly LoggerInterface $logger
     ) {
         parent::__construct($context);
-        $this->dataPersistor = $dataPersistor;
-        $this->productRestrictionRepository = $productRestrictionRepository;
-        $this->productRestrictionFactory = $productRestrictionFactory;
-        $this->logger = $logger;
     }
 
     public function execute()

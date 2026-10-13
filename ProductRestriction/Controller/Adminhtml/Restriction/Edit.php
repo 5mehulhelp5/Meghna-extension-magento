@@ -7,17 +7,13 @@ use Magento\Framework\View\Result\PageFactory;
 
 class Edit extends Action
 {
-    protected $resultPageFactory;
-    protected $productRestrictionRepository;
 
     public function __construct(
         Action\Context $context,
-        PageFactory $resultPageFactory,
-        ProductRestrictionRepositoryInterface $productRestrictionRepository
+        protected readonly PageFactory $resultPageFactory,
+        protected readonly ProductRestrictionRepositoryInterface $productRestrictionRepository
     ) {
         parent::__construct($context);
-        $this->resultPageFactory = $resultPageFactory;
-        $this->productRestrictionRepository = $productRestrictionRepository;
     }
 
     public function execute()

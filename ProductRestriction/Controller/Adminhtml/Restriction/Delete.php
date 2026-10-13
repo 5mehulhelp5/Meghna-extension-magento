@@ -1,19 +1,17 @@
 <?php
 namespace Codilar\ProductRestriction\Controller\Adminhtml\Restriction;
 
-use Magento\Backend\App\Action;
 use Codilar\ProductRestriction\Api\ProductRestrictionRepositoryInterface;
+use Magento\Backend\App\Action;
 
 class Delete extends Action
 {
-    protected $productRestrictionRepository;
 
     public function __construct(
         Action\Context $context,
-        ProductRestrictionRepositoryInterface $productRestrictionRepository
+        protected readonly ProductRestrictionRepositoryInterface $productRestrictionRepository
     ) {
         parent::__construct($context);
-        $this->productRestrictionRepository = $productRestrictionRepository;
     }
 
     public function execute()

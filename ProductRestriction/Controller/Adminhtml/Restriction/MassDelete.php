@@ -9,18 +9,14 @@ use Codilar\ProductRestriction\Model\ResourceModel\ProductRestriction\Collection
 
 class MassDelete extends Action
 {
-    protected $filter;
-    protected $collectionFactory;
-
     public function __construct(
         Context $context,
-        Filter $filter,
-        CollectionFactory $collectionFactory
+        protected readonly Filter $filter,
+        protected readonly CollectionFactory $collectionFactory
     ) {
         parent::__construct($context);
-        $this->filter = $filter;
-        $this->collectionFactory = $collectionFactory;
     }
+
 
     public function execute()
     {
